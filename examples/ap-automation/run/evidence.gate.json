@@ -1,0 +1,24 @@
+{
+  "gate_version": "2.0",
+  "stage": "evidence",
+  "passed": true,
+  "checked_at": "2026-10-01T23:22:16+00:00",
+  "violations": [],
+  "warnings": [],
+  "metrics": {
+    "claims": 51,
+    "admitted": 51,
+    "vendor_claims": 2,
+    "evidence_kinds": {
+      "market_data": 10,
+      "observed_behavior": 12,
+      "past_episode": 15,
+      "prediction": 3,
+      "stated_preference": 9,
+      "vendor_claim": 2
+    },
+    "documents": 8,
+    "independent_origins": 8,
+    "research_methods": 3
+  }
+}

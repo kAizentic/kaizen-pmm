@@ -1,0 +1,105 @@
+{
+  "stage": "strategy_brief",
+  "payload": {
+    "contract_version": "2.0",
+    "strategic_recommendation": "Sell Northwind AP as an approval and exception-control layer on top of the buyer's existing ERP, aimed at controllers and CFOs under audit pressure, and win every deal through a 30-day pilot on one business unit with a read-only ERP connection.",
+    "recommended_icp": "Mid-market finance teams (200 to 2,000 employees) that already run an ERP-native AP module, route approvals to budget owners outside finance, and face auditor scrutiny of payment controls, where the controller or CFO owns the decision.",
+    "excluded_icps": [
+      {
+        "item": "High-volume AP shops above 12,000 invoices a month buying on cost per invoice",
+        "reason": "These buyers choose on per-invoice cost, a frame outsourced providers and ERP modules both answer; both such deals were lost to Fabrikam without a pilot.",
+        "evidence": ["E38", "E04"]
+      },
+      {
+        "item": "Teams whose IT refuses any second system touching the ERP",
+        "reason": "An overlay product cannot win where IT blocks a second system; the one loss to Contoso was exactly this.",
+        "evidence": ["E39"]
+      },
+      {
+        "item": "Buyers framing AP as a data-entry or capture-cost problem",
+        "reason": "Capture is already handled by ERP modules and OCR; buyers in that frame compare us against tools that already solve it.",
+        "evidence": ["E01", "E09"]
+      }
+    ],
+    "problem_frame": "Invoices are captured but stall waiting on approvers outside finance, and exceptions are resolved in email with no record, so finance cannot close on time or prove to auditors who approved a payment and why.",
+    "wedge": "Multi-level approval routing with escalation that non-ERP budget owners complete from email or mobile, plus a recorded decision trail on every exception, deployed over the existing ERP without replacing it.",
+    "category_frame": "Approval and exception control for ERP-based accounts payable",
+    "category_style": "subsegment",
+    "differentiation_claim": "Unlike the Contoso Finance Suite AP module, which routes to one approver per cost center with no escalation and cannot reach non-ERP users, Northwind routes multi-level approvals with escalation to any budget owner and records who decided each exception; unlike Fabrikam Payables Services, exceptions stay in house with their context; unlike email and spreadsheets, every decision is auditable.",
+    "proof_requirements": [
+      "A 30-day pilot on one business unit with a read-only ERP connection, before any write-back",
+      "A clickable approval trail showing who approved each payment and whether they were authorized for the amount",
+      "A recorded decision history for every exception that the controller can show their auditor",
+      "An independent verification step for supplier bank-detail changes"
+    ],
+    "preferred_gtm_motion": "Controller- and CFO-led sales into existing ERP-module customers, with a 30-day single-business-unit pilot on a read-only ERP connection as the mandatory entry step.",
+    "rejected_gtm_motions": [
+      {
+        "item": "Rip-and-replace standalone AP suite sale",
+        "reason": "Replacing ERP payables triggers long migrations and IT resistance; buyers explicitly want a layer that leaves the ERP in place.",
+        "evidence": ["E49", "E16"]
+      },
+      {
+        "item": "Selling on cost per invoice against outsourced providers",
+        "reason": "Cost-per-invoice deals were lost without pilots, and outsourcing savings erode once exceptions come back in house, so price is the wrong battlefield.",
+        "evidence": ["E38", "E25", "E48"]
+      },
+      {
+        "item": "Deals without a pilot",
+        "reason": "No deal without a pilot has closed.",
+        "evidence": ["E36"]
+      }
+    ],
+    "key_adoption_blockers": [
+      "IT capacity to schedule the ERP integration; every status-quo loss stalled here",
+      "IT refusal of a second system touching the ERP",
+      "Approvers outside finance who ignore ERP notifications and lack ERP logins"
+    ],
+    "strategic_risks": [
+      "ERP vendors add multi-level routing and escalation to their native AP modules, removing the wedge in the Contoso-owned base where most wins occur",
+      "Integration stalls persist even with a read-only connection, keeping the status quo as the main competitor",
+      "The win/loss base is only 12 decided deals, so pilot and win-pattern rates are directional",
+      "Bank-change verification is demanded by buyers and auditors, but the corpus does not show Northwind already delivers it; the proof requirement depends on product scope"
+    ],
+    "assumptions": [
+      {
+        "assumption": "A read-only ERP connection fits within IT capacity that full integrations do not",
+        "what_would_falsify": "Pilots with a read-only connection still stall waiting for IT scheduling at the same rate as past status-quo losses"
+      },
+      {
+        "assumption": "Audit pressure makes payment controls urgent enough to buy this year rather than live with email approvals",
+        "what_would_falsify": "Controllers facing added auditor testing still defer purchase past their next audit cycle"
+      },
+      {
+        "assumption": "Contoso and similar ERP modules keep single-approver routing without escalation for the next sales cycle",
+        "what_would_falsify": "Contoso ships multi-level routing with escalation and non-ERP approvals, and win rate against it drops"
+      }
+    ],
+    "decision_rationale": "Approval wait time and exceptions are where AP time and audit risk now concentrate, while capture is solved by ERP modules. Wins came against Contoso on multi-level routing and non-ERP approvals, and on the exception audit trail, when a controller or CFO owned an approvals or audit problem; losses came from integration stalls and cost-per-invoice framing. Every closed deal ran a pilot. So the strategy targets audit-pressured ERP-module owners, leads with controls rather than cost, and enters through a low-IT pilot.",
+    "dependent_message_requirements": [
+      "Lead with approvals and audit evidence, never with capture or data-entry speed",
+      "Make 'keeps your ERP' explicit to neutralize rip-and-replace and IT objections",
+      "Name the email and spreadsheet status quo as the thing being replaced",
+      "Offer the read-only pilot as the call to action"
+    ],
+    "immediate_next_strategic_moves": [
+      "Package a standard 30-day single-business-unit pilot on a read-only ERP connection to address the IT integration blocker",
+      "Build an auditor-ready approval and exception trail demo that controllers can show their auditors, matching the proof requirement",
+      "Target outbound at existing Contoso AP module customers with audit pressure, where wins concentrate",
+      "Decide whether bank-change verification is in product scope, since it is a stated proof requirement and an open risk"
+    ],
+    "research_brief_divergence_notes": null
+  },
+  "citations": {
+    "strategic_recommendation": ["E01", "E34", "E35", "E36", "E40"],
+    "recommended_icp": ["E05", "E09", "E27", "E34", "E45"],
+    "problem_frame": ["E01", "E02", "E03", "E10", "E11", "E28", "E45", "E47"],
+    "wedge": ["E14", "E24", "E26", "E34", "E46"],
+    "differentiation_claim": ["E14", "E24", "E34", "E20", "E21", "E13", "E46"],
+    "proof_requirements": ["E18", "E32", "E35", "E36", "E40", "E42"],
+    "preferred_gtm_motion": ["E34", "E36", "E40"],
+    "key_adoption_blockers": ["E08", "E37", "E39", "E24", "E45"],
+    "strategic_risks": ["E06", "E37", "E23", "E29", "E41"],
+    "decision_rationale": ["E01", "E02", "E34", "E35", "E36", "E37", "E38"]
+  }
+}

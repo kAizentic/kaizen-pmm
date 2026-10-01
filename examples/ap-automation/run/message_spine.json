@@ -1,0 +1,93 @@
+{
+  "stage": "message_spine",
+  "payload": {
+    "contract_version": "1.0",
+    "master_narrative": "Auditors have moved down-market: they now test payment controls at mid-sized companies and ask who approved each payment and whether that person was authorized for the amount. Meanwhile the ERP AP module solved capture, so invoices get into the system fine and then sit, waiting days on plant, clinic and department managers who approve in batches or not at all, while exceptions get settled in email threads nobody can find at audit time. Finance teams can get to a close where every invoice is approved on time by the right person and every exception decision is one click from the auditor, without replacing the ERP. Controllers who ran a 30-day pilot on one business unit showed the exception trail to their auditor and bought.",
+    "category_statement": "Northwind AP is approval and exception control for the ERP you already run: it routes invoice approvals and records exception decisions on top of your existing accounts payable module.",
+    "wedge_expression": "Approvals that reach every budget owner, escalate when they stall, and leave a decision trail on every exception, with your ERP left in place.",
+    "value_pillars": [
+      "Approvals that actually happen: multi-level approval routing with escalation and delegation, completed by budget owners from email or mobile without an ERP login.",
+      "An exception trail your auditor can click: every PO or receipt mismatch is resolved in one place with a record of who decided and why, instead of a 10-email thread.",
+      "Controls evidence on demand: show who approved each payment and whether they were authorized for the amount, without weeks of reconstruction during fieldwork.",
+      "Keeps your ERP: starts on a read-only ERP connection and one business unit, so IT is not asked for a migration."
+    ],
+    "persona_message_hierarchy": [
+      {
+        "persona": "Controller at a mid-market finance team running an ERP-native AP module under auditor scrutiny",
+        "headline": "Your invoices are captured. Now get them approved, and prove who approved them.",
+        "supporting_proof": "Win/loss record against the Contoso AP module on multi-level routing and non-ERP approvals, plus the exception audit trail controllers showed their auditors"
+      },
+      {
+        "persona": "CFO of a pre-audit or pre-IPO mid-market company",
+        "headline": "Payment-control evidence before audit fieldwork starts, not after.",
+        "supporting_proof": "Approval trail per payment with authorization by amount, replacing roughly 40 minutes of reconstruction per sampled invoice"
+      },
+      {
+        "persona": "AP manager with approvers outside the ERP",
+        "headline": "Stop chasing approvers and stop keeping the exceptions spreadsheet.",
+        "supporting_proof": "Approvals completed from email or mobile without an ERP login, and a shared exception record that does not leave when staff leave"
+      }
+    ],
+    "proof_points": [
+      "Pilot: a 30-day pilot on one business unit with a read-only ERP connection; deals with a pilot closed at 5 of 6",
+      "Approval trail: a clickable record showing who approved each payment and whether they were authorized for the amount",
+      "Exception decision history: a recorded trail for every exception that the controller can show their auditor; three wins cited it during procurement",
+      "Competitive: four of five wins came against the Contoso Finance Suite AP module, decided on multi-level routing with escalation and approvals for non-ERP users",
+      "Bank-detail change verification: an independent verification step for supplier bank-detail changes, which auditors now ask about (confirm product scope before using externally)"
+    ],
+    "objection_map": [
+      "'Our ERP module already does AP': agree on capture, then show the routing gap of one approver per cost center with no escalation and no reach to non-ERP users.",
+      "'IT has no capacity for another integration': lead with the read-only connection and single-unit pilot; no ERP replacement and no write-back at start.",
+      "'Outsourcing is cheaper per invoice': acknowledge the per-invoice price, then point to exceptions coming back in house late and without context.",
+      "'We'll never do a rip-and-replace again': agree; Northwind sits on top of the ERP rather than replacing payables.",
+      "'Email approvals work fine': ask how long it takes to show an auditor who approved a sampled payment."
+    ],
+    "messaging_guardrails": [
+      "Lead with approvals and audit evidence, never with capture or data-entry speed",
+      "Always state that the ERP stays in place",
+      "Every call to action routes to the single-business-unit pilot",
+      "Do not claim bank-change verification as shipped until product scope is confirmed",
+      "Do not compete on cost per invoice"
+    ],
+    "forbidden_language": [
+      "touchless",
+      "AI-powered",
+      "rip-and-replace",
+      "lower cost per invoice",
+      "invoices process themselves"
+    ],
+    "content_angle_seeds": [
+      "The 40-minute invoice: what it costs to reconstruct one approval for an auditor",
+      "Your AP module solved capture. Who solved approvals?",
+      "The $38,000 duplicate payment nobody could explain",
+      "Why the exceptions spreadsheet is a controls risk when staff turn over"
+    ],
+    "cta_logic": [
+      "Primary: start a 30-day pilot on one business unit with a read-only ERP connection",
+      "Secondary: see the approval and exception trail you would show your auditor"
+    ],
+    "downstream_asset_implications": [
+      "Sales enablement builds a pilot playbook and an auditor-facing trail demo before any broad campaign",
+      "Competitive battlecard against the Contoso AP module centers on routing, escalation and non-ERP approvers",
+      "Channel targeting prioritizes existing ERP-native AP module customers with audit pressure",
+      "Website and ads avoid capture-speed and cost-per-invoice claims"
+    ],
+    "strategy_brief_divergence_notes": null
+  },
+  "citations": {
+    "master_narrative": ["E05", "E42", "E09", "E10", "E13", "E35", "E36"],
+    "category_statement": ["E06", "E09"],
+    "wedge_expression": ["E14", "E34", "E26"],
+    "value_pillars.0": ["E34", "E14", "E46", "E24", "E45"],
+    "value_pillars.1": ["E47", "E13", "E03", "E35"],
+    "value_pillars.2": ["E28", "E42", "E44"],
+    "value_pillars.3": ["E40", "E36", "E49", "E37"],
+    "persona_message_hierarchy.0": ["E34", "E35", "E09", "E17", "E18"],
+    "persona_message_hierarchy.1": ["E27", "E28", "E32"],
+    "persona_message_hierarchy.2": ["E21", "E22", "E26", "E45"],
+    "proof_points": ["E36", "E40", "E42", "E35", "E34", "E23", "E29", "E41"],
+    "objection_map": ["E14", "E24", "E37", "E40", "E25", "E20", "E49", "E28"],
+    "content_angle_seeds": ["E28", "E09", "E12", "E22"],
+    "cta_logic": ["E36", "E40"]
+  }
+}

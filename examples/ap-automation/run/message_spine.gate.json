@@ -1,0 +1,13 @@
+{
+  "gate_version": "2.0",
+  "stage": "message_spine",
+  "passed": true,
+  "checked_at": "2026-10-01T23:23:31+00:00",
+  "violations": [],
+  "warnings": [],
+  "metrics": {
+    "category_head_noun": "control",
+    "wedge_terms_in_best_pillar": 8,
+    "icp_terms_in_first_persona": 7
+  }
+}

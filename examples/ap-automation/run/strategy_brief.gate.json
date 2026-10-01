@@ -1,0 +1,14 @@
+{
+  "gate_version": "2.0",
+  "stage": "strategy_brief",
+  "passed": true,
+  "checked_at": "2026-10-01T23:22:59+00:00",
+  "violations": [],
+  "warnings": [],
+  "metrics": {
+    "problem_frame_origins": 4,
+    "differentiation_claim_origins": 4,
+    "problem_frame_methods": 2,
+    "cited_evidence": 33
+  }
+}
