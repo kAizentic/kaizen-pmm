@@ -1,6 +1,7 @@
 """Command line: run a gate, show a run's status, or act as a Claude Code hook.
 
     python -m kaizen schema <stage>
+    python -m kaizen fetch <url> --run <run_dir> --source-type <type> --relation <relation>
     python -m kaizen gate <stage> <run_dir>
     python -m kaizen status <run_dir>
     python -m kaizen hook            (reads the hook event JSON on stdin)
@@ -74,6 +75,15 @@ def cmd_hook() -> int:
     if m and sys.platform == "win32":  # MSYS-style path from a POSIX shell on Windows
         raw = f"{m.group(1)}:/{m.group(2)}"
     path = Path(raw).resolve()
+    if any(p.name == "corpus" and p.parent.parent.name == "runs" for p in path.parents):
+        if event.get("hook_event_name") == "PreToolUse":
+            print(
+                "kaizen: blocked writing into the research corpus: pages are saved by "
+                "`python -m kaizen fetch`, never written by an agent",
+                file=sys.stderr,
+            )
+            return 2
+        return 0
     if path.parent.parent.name == "runs" and (path.name.endswith(".gate.json") or path.name == "evidence.scored.json"):
         if event.get("hook_event_name") == "PreToolUse":
             print(f"kaizen: blocked writing {path.name}: gate output is written by the gate, not by an agent", file=sys.stderr)
@@ -104,13 +114,22 @@ def cmd_hook() -> int:
 
 def cmd_schema(stage: str) -> int:
     """Print the JSON schema an agent must write for a stage: one source of truth for the shape."""
-    from kaizen.gate import EvidenceFile, StageArtifact
+    from kaizen.gate import EvidenceFile, ResearchPlan, StageArtifact
     from kaizen.message_spine_contract import SECTION_INTENT as SPINE_INTENT
     from kaizen.message_spine_contract import MessageSpineStructuredPayload
     from kaizen.strategy_brief_contract import SECTION_INTENT as BRIEF_INTENT
     from kaizen.strategy_brief_contract import TRANSFORMATION_BOUNDARIES, StrategyBriefStructuredPayload
 
-    if stage == "evidence":
+    if stage == "research":
+        from kaizen.fetch import AUTHOR_RELATIONS, SOURCE_TYPES
+
+        out = {
+            "file": "research.json",
+            "schema": ResearchPlan.model_json_schema(),
+            "fetch_source_types": list(SOURCE_TYPES),
+            "fetch_author_relations": list(AUTHOR_RELATIONS),
+        }
+    elif stage == "evidence":
         out = {"file": "evidence.json", "schema": EvidenceFile.model_json_schema()}
     elif stage in ("strategy_brief", "message_spine"):
         model = StrategyBriefStructuredPayload if stage == "strategy_brief" else MessageSpineStructuredPayload
@@ -130,7 +149,38 @@ def cmd_schema(stage: str) -> int:
     return 0
 
 
+def cmd_fetch(argv: list[str]) -> int:
+    import argparse
+
+    from kaizen.fetch import AUTHOR_RELATIONS, SOURCE_TYPES, FetchError, fetch_page, save_to_corpus
+
+    ap = argparse.ArgumentParser(prog="python -m kaizen fetch")
+    ap.add_argument("url")
+    ap.add_argument("--run", required=True, help="run directory, e.g. runs/my-run")
+    ap.add_argument("--source-type", required=True, choices=SOURCE_TYPES)
+    ap.add_argument("--relation", required=True, choices=AUTHOR_RELATIONS)
+    args = ap.parse_args(argv)
+    try:
+        page = fetch_page(args.url)
+        path = save_to_corpus(
+            page,
+            Path(args.run).resolve() / "corpus",
+            source_type=args.source_type,
+            author_relation=args.relation,
+        )
+    except FetchError as e:
+        print(f"fetch refused: {e}")
+        return 1
+    print(f"saved {path.name}")
+    print(f"    title: {page.title.encode('ascii', 'replace').decode()}")
+    print(f"    published: {page.published or 'none found'}")
+    print(f"    chars: {len(page.text)}")
+    return 0
+
+
 def main(argv: list[str]) -> int:
+    if argv[:1] == ["fetch"]:
+        return cmd_fetch(argv[1:])
     if len(argv) >= 2 and argv[0] == "schema":
         return cmd_schema(argv[1])
     if len(argv) >= 3 and argv[0] == "gate":

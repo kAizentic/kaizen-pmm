@@ -1,6 +1,6 @@
 ---
 name: kaizen
-description: Run the Kaizen product marketing pipeline on a research corpus - evidence, then strategy brief, then message spine - with a deterministic gate after every stage. Use when the user says "run kaizen", "run the pipeline on <corpus>", or asks to turn market research into a strategy brief and messaging.
+description: Run the Kaizen product marketing pipeline - optional web research, then evidence, strategy brief and message spine - with a deterministic gate after every stage. Use when the user says "run kaizen", "run the pipeline on <corpus>", "research <market> and build a strategy", or asks to turn market research into a strategy brief and messaging.
 ---
 
 # Kaizen pipeline
@@ -14,12 +14,15 @@ Commands below use `python`; on systems where that name is missing use `python3`
 
 1. Pick a run directory: `runs/<run-name>/` (one per run, never reused).
 2. Run the stages in order, using each stage's skill:
-   1. `kaizen-evidence` writes `evidence.json`
+   0. `kaizen-research` (only when given a market to research rather than a corpus): fetches pages
+      into `runs/<run-name>/corpus/` and writes `research.json`
+   1. `kaizen-evidence` writes `evidence.json` (corpus: the given folder, or `runs/<run-name>/corpus`)
    2. `kaizen-strategy-brief` writes `strategy_brief.json`
    3. `kaizen-message-spine` writes `message_spine.json`
 3. After each write the hook prints `gate passed` or a list of violations. On a failure, fix the
-   artifact and write it again. Do not move on with a failing gate, and do not edit any
-   `*.gate.json` or `evidence.scored.json` file: those are written by the gate, not by you.
+   artifact and write it again. Do not move on with a failing gate. Do not edit any `*.gate.json`
+   or `evidence.scored.json` file, or anything in a run's `corpus/` folder: those are written by
+   code, not by you.
 4. Finish with `python -m kaizen status runs/<run-name>` and report each stage's result.
 
 ## Rules that hold across stages

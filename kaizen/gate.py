@@ -40,9 +40,11 @@ from kaizen.strategy_brief_contract import StrategyBriefStructuredPayload
 
 GATE_VERSION = "2.0"
 
-STAGES: tuple[str, ...] = ("evidence", "strategy_brief", "message_spine")
+STAGES: tuple[str, ...] = ("research", "evidence", "strategy_brief", "message_spine")
+# Research is optional: evidence waits for it only when the run has a research plan.
 UPSTREAM: dict[str, str | None] = {
-    "evidence": None,
+    "research": None,
+    "evidence": "research",
     "strategy_brief": "evidence",
     "message_spine": "strategy_brief",
 }
@@ -742,9 +744,118 @@ def gate_message_spine(run_dir: Path, repo_root: Path) -> GateReport:
 
 
 # --------------------------------------------------------------------------------------------
+# Research
+
+
+MIN_RESEARCH_DOCS = 5
+MIN_RESEARCH_DOMAINS = 3
+
+
+class ResearchSource(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    file: str = Field(..., min_length=4)
+    question: str = Field(..., min_length=12, description="Which research question this source answers.")
+
+
+class ResearchPlan(BaseModel):
+    """What the research agent writes. It names questions, queries and sources; it never holds page text."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    stage: Literal["research"]
+    questions: list[str] = Field(..., min_length=1)
+    queries: list[str] = Field(..., min_length=1)
+    sources: list[ResearchSource] = Field(..., min_length=1)
+
+
+def gate_research(run_dir: Path, repo_root: Path) -> GateReport:
+    from kaizen.fetch import AUTHOR_RELATIONS as FETCH_RELATIONS
+    from kaizen.fetch import SOURCE_TYPES, body_hash, load_manifest
+
+    _ = repo_root
+    report = GateReport("research")
+    path = run_dir / "research.json"
+    try:
+        plan = ResearchPlan.model_validate_json(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        report.fail("missing_artifact", str(path))
+        return report
+    except ValidationError as e:
+        for err in e.errors():
+            loc = ".".join(str(x) for x in err["loc"])
+            report.fail("contract_violation", f"{loc}: {err['msg']}")
+        return report
+
+    corpus = run_dir / "corpus"
+    manifest = load_manifest(corpus)
+    docs = load_corpus(corpus)
+
+    # Integrity: every document was written by the fetcher and is unchanged since.
+    for name, doc in docs.items():
+        entry = manifest.get(name)
+        if entry is None:
+            report.fail("unmanifested_document", f"{name} was not written by the fetcher")
+        elif body_hash(doc.body) != entry["sha256"]:
+            report.fail("document_modified", f"{name} changed after it was fetched")
+    for name in manifest:
+        if name not in docs:
+            report.fail("missing_document", name)
+
+    # Every source is declared, and a vendor's own page is never labelled independent.
+    for name, doc in docs.items():
+        st = doc.meta.get("source_type", "")
+        rel = doc.meta.get("author_relation", "")
+        if st not in SOURCE_TYPES or rel not in FETCH_RELATIONS:
+            report.fail("undeclared_source", f"{name}: source_type={st or '?'} author_relation={rel or '?'}")
+        if st == "vendor_page" and rel not in VENDOR_RELATIONS:
+            report.fail("vendor_page_not_vendor", f"{name}: a vendor page must be vendor, competitor or sponsored")
+        pen = promotional_penalty(doc)
+        if pen >= PROMOTIONAL_PENALTY and rel not in VENDOR_RELATIONS:
+            report.warn("promotional_source_marked_independent", f"{name}: penalty {pen}; the evidence gate will treat it as sponsored")
+        if "published" not in doc.meta:
+            report.warn("undated_source", f"{name}: the page carries no publication date")
+        url = (manifest.get(name) or {}).get("url", "")
+        if rel == "independent" and re.search(r"/(blog|resources|insights|learn)/", url):
+            # Company blogs are usually the company's own marketing; the gate cannot know who owns a domain.
+            report.warn("self_published_marked_independent", f"{name}: {url} looks like a company's own content")
+
+    # Every fetched source answers a stated question.
+    questions = set(plan.questions)
+    cited = set()
+    for s in plan.sources:
+        if s.file not in manifest:
+            report.fail("unknown_source", s.file)
+        if s.question not in questions:
+            report.fail("source_answers_no_question", f"{s.file}: question is not one of the plan's questions")
+        cited.add(s.file)
+    for name in manifest:
+        if name not in cited:
+            report.fail("unexplained_document", f"{name} is in the corpus but no source entry says why")
+
+    domains = {e["domain"] for e in manifest.values()}
+    types = {d.meta.get("source_type") for d in docs.values()}
+    report.metrics = {
+        "documents": len(docs),
+        "domains": len(domains),
+        "source_types": sorted(t for t in types if t),
+        "dated": sum(1 for d in docs.values() if "published" in d.meta),
+        "questions": len(plan.questions),
+    }
+    if len(docs) < MIN_RESEARCH_DOCS:
+        report.fail("too_few_sources", f"{len(docs)} documents, need {MIN_RESEARCH_DOCS}")
+    if len(domains) < MIN_RESEARCH_DOMAINS:
+        report.fail("too_few_domains", f"{len(domains)} sites, need {MIN_RESEARCH_DOMAINS}")
+    if len(types) < 2:
+        report.warn("single_source_type", "every source is the same kind; evidence will have one research method")
+    return report
+
+
+# --------------------------------------------------------------------------------------------
 # Entry points
 
 GATES = {
+    "research": gate_research,
     "evidence": gate_evidence,
     "strategy_brief": gate_strategy_brief,
     "message_spine": gate_message_spine,
@@ -754,6 +865,8 @@ GATES = {
 def upstream_passed(run_dir: Path, stage: str) -> tuple[bool, str]:
     up = UPSTREAM[stage]
     if up is None:
+        return True, ""
+    if up == "research" and not (run_dir / "research.json").exists():
         return True, ""
     rpt = run_dir / f"{up}.gate.json"
     if not rpt.exists():
